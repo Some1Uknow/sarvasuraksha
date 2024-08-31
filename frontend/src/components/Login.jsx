@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GoBack from "../constants/goBack";
+import GoBack from "../constants/GoBack";
 
 const Login = () => {
   const [userType, setUserType] = useState("");
