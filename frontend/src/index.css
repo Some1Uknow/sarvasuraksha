@@ -1,0 +1,11 @@
+/* In your global CSS file or Tailwind config */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #FF9933; /* Saffron */
+  --secondary-color: #138808; /* Green */
+  --accent-color: #000080; /* Navy Blue */
+  --background-color: #F5F5F5; /* Light Gray */
+}
