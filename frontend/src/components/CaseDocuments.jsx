@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Modal from "react-modal";
-import GoBack from "../constants/goBack";
+import GoBack from "../constants/GoBack";
 Modal.setAppElement("#root");
 
 const CaseDocuments = () => {
