@@ -10,9 +10,9 @@ const LawyerDashboard = () => {
   const cases = [
     {
       id: 1,
-      title: "Smith vs. Johnson",
-      parties: "John Smith, Michael Johnson",
-      description: "Dispute over business contract breach.",
+      title: "Ravi Kumar vs. Smita Patel",
+      parties: "Ravi Kumar, Smita Patel",
+      description: "Dispute over breach of business contract.",
       importantDates: "2024-09-10 (Filing Deadline)",
       assignedTasks: "Review contract, prepare defense strategy.",
       recentActivity: "Uploaded contract analysis report.",
@@ -20,12 +20,33 @@ const LawyerDashboard = () => {
     },
     {
       id: 2,
-      title: "State vs. Davis",
-      parties: "State of California, Robert Davis",
+      title: "State of Maharashtra vs. Rajesh Mehta",
+      parties: "State of Maharashtra, Rajesh Mehta",
       description: "Criminal case involving alleged fraud.",
       importantDates: "2024-08-30 (Court Appearance)",
       assignedTasks: "Prepare witness statements, gather evidence.",
       recentActivity: "Filed motion to dismiss.",
+      status: "Pending",
+    },
+    {
+      id: 3,
+      title: "Aditi Sharma vs. Vikram Singh",
+      parties: "Aditi Sharma, Vikram Singh",
+      description: "Dispute over property ownership.",
+      importantDates: "2024-10-15 (Mediation)",
+      assignedTasks: "Review property deeds, prepare settlement offer.",
+      recentActivity: "Sent settlement offer to opposing counsel.",
+      status: "In Progress",
+    },
+    {
+      id: 4,
+      title: "Arjun Verma vs. Priya Rao",
+      parties: "Arjun Verma, Priya Rao",
+      description: "Dispute over employment contract.",
+      importantDates: "2024-11-01 (Arbitration)",
+      assignedTasks:
+        "Review employment contract, prepare arbitration statement.",
+      recentActivity: "Received arbitration notice from opposing counsel.",
       status: "Pending",
     },
   ];
@@ -47,7 +68,7 @@ const LawyerDashboard = () => {
     <div className="min-h-screen bg-gray-100 flex">
       <Sidebar setActiveComponent={setActiveComponent} />
       {/* Main Content */}
-      <main className="flex-grow p-6 ml-1/5" style={{ marginLeft: '20%' }}>
+      <main className="flex-grow p-6 ml-1/5" style={{ marginLeft: "20%" }}>
         {renderComponent()}
       </main>
     </div>

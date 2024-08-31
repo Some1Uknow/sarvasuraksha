@@ -11,7 +11,7 @@ const Sidebar = ({ setActiveComponent }) => {
           className="w-14 h-14 object-cover rounded-full bg-gray-300"
         />
         <div>
-          <h2 className="text-2xl font-bold">John Doe</h2>
+          <h2 className="text-2xl font-bold">User name</h2>
           <p className="text-sm">User Type: Lawyer</p>
         </div>
       </div>
