@@ -8,11 +8,12 @@ const Sidebar = ({ setActiveComponent }) => {
         <img
           src="https://via.placeholder.com/150" // Placeholder image URL
           alt="Placeholder"
-          className="w-14 h-14 object-cover rounded-full bg-gray-300"
+          className="w-16 h-16 object-cover rounded-full bg-gray-300"
         />
         <div>
           <h2 className="text-2xl font-bold">User name</h2>
           <p className="text-sm">User Type: Lawyer</p>
+          <p className="text-sm">Account Type: Basic (free)</p>
         </div>
       </div>
       <nav>

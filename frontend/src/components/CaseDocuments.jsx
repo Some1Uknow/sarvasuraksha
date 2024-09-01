@@ -2,12 +2,23 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Modal from "react-modal";
 import GoBack from "../constants/GoBack";
-Modal.setAppElement("#root");
+import {
+  File,
+  FileText,
+  Image,
+  Video,
+  Upload,
+  Trash,
+  Share,
+  X as XIcon,
+} from "lucide-react";
 
-const CaseDocuments = () => {
+export default function CaseDocuments() {
   const { id } = useParams();
   const [selectedDoc, setSelectedDoc] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [documents, setDocuments] = useState([
     {
       id: 1,
@@ -116,132 +127,262 @@ const CaseDocuments = () => {
   ]);
 
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const openPreviewModal = (doc) => {
-    setSelectedDoc(doc);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const showDocumentInfo = (doc) => {
-    setSelectedDoc(doc);
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleFileUpload = (e) => {
-    // ... (keep the existing file upload logic)
+    const file = e.target.files[0];
+    if (file) {
+      setIsUploading(true);
+      // Simulate file upload
+      setTimeout(() => {
+        const newDoc = {
+          id: documents.length + 1,
+          name: file.name,
+          type: file.type.split("/").pop(), // Get file extension
+          hash: "0x" + Math.random().toString(16).slice(2),
+          description: `Uploaded document: ${file.name}`,
+          logs: [
+            {
+              id: 1,
+              action: "Uploaded",
+              time: new Date().toISOString(),
+              description: "Document uploaded",
+            },
+          ],
+        };
+        setDocuments((prevDocs) => [...prevDocs, newDoc]);
+        setUploadedFile(null);
+        setIsUploading(false);
+      }, 2000);
+    }
+  };
+
+  const openLogsModal = (doc) => {
+    setSelectedDoc(doc);
+    setIsLogsModalOpen(true);
+  };
+
+  const closeLogsModal = () => {
+    setIsLogsModalOpen(false);
+    setSelectedDoc(null);
+  };
+
+  const openPreviewModal = (doc) => {
+    setSelectedDoc(doc);
+    setIsPreviewModalOpen(true);
+  };
+
+  const closePreviewModal = () => {
+    setIsPreviewModalOpen(false);
+    setSelectedDoc(null);
+  };
+
+  const filteredDocs = documents.filter((doc) =>
+    doc.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getFileIcon = (type) => {
+    switch (type) {
+      case "pdf":
+        return <File size={20} />;
+      case "jpg":
+      case "jpeg":
+      case "png":
+        return <Image size={20} />;
+      case "mp4":
+        return <Video size={20} />;
+      case "doc":
+      case "docx":
+        return <FileText size={20} />;
+      default:
+        return <File size={20} />;
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto flex items-center py-6 px-4 sm:px-6 lg:px-8">
-          <GoBack />
-          <h1 className="text-3xl font-bold text-gray-900">Case Documents</h1>
+        <div className="max-w-7xl mx-auto flex items-center justify-between py-6 px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            <GoBack />
+            Case Documents
+          </h1>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search documents..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <input
+              type="file"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="fileUpload"
+            />
+            <label
+              htmlFor="fileUpload"
+              className="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Upload className="mr-2" size={20} />
+              Upload Document
+            </label>
+            {isUploading && (
+              <div className="mt-4 p-4 bg-blue-100 rounded-md">
+                <h3 className="text-lg font-medium text-blue-900">
+                  Uploading...
+                </h3>
+                <p className="mt-1 text-sm text-blue-700">
+                  Your document is being uploaded. Please wait.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </header>
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex flex-col lg:flex-row">
-            <div className="w-full lg:w-1/3 pr-4 mb-6 lg:mb-0">
-              <h2 className="text-xl font-semibold mb-4">Documents</h2>
-              <input
-                type="file"
-                onChange={handleFileUpload}
-                className="mb-4 border border-gray-300 p-2 rounded w-full"
-              />
-              <ul className="space-y-2">
-                {documents.map((doc) => (
-                  <li
-                    key={doc.id}
-                    className="flex items-center justify-between p-2 bg-white rounded-lg shadow cursor-pointer hover:bg-gray-50"
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredDocs.map((doc) => (
+                <tr key={doc.id}>
+                  <td
+                    className="px-6 py-4 whitespace-nowrap"
+                    onClick={() => openPreviewModal(doc)}
                   >
-                    <span
-                      className="cursor-pointer hover:underline"
-                      onClick={() => openPreviewModal(doc)}
-                    >
-                      {doc.name}
+                    <span className="flex flex-row gap-1 items-center">
+                      {getFileIcon(doc.type)} {doc.name}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {doc.description}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap flex items-center">
                     <button
-                      className="text-blue-600 hover:text-blue-800"
-                      onClick={() => showDocumentInfo(doc)}
+                      className="bg-red-600 text-white p-3 rounded-md hover:underline"
+                      onClick={() => openLogsModal(doc)}
                     >
-                      Info
+                      Logs
                     </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="w-full lg:w-2/3 pl-4">
-              {selectedDoc && (
-                <div className="p-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold mb-2">
-                    {selectedDoc.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">
-                    IPFS Hash: {selectedDoc.hash}
-                  </p>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Description: {selectedDoc.description}
-                  </p>
-                  <div className="bg-gray-200 rounded-md p-2">
-                    <h4 className="font-medium mb-2">Document Logs:</h4>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {selectedDoc.logs.map((log) => (
-                        <li key={log.id} className="text-sm text-gray-600">
-                          <p>
-                            <strong>{log.action}</strong> on {log.time}
-                          </p>
-                          <p>{log.description}</p>
-                          <p>
-                            <em>Changes: {log.changes}</em>
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+                    <button className="text-gray-500 hover:underline ml-4">
+                      <Share size={16} /> Share
+                    </button>
+                    <button className="text-red-500 hover:underline ml-4">
+                      <Trash size={16} /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </main>
 
-      {/* Modal for Document Preview */}
+      {/* Logs Modal */}
       <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Document Preview"
-        className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
-        overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+        isOpen={isLogsModalOpen}
+        onRequestClose={closeLogsModal}
+        ariaHideApp={false}
+        style={{
+          content: {
+            width: "50vw",
+            height: "50vh",
+            margin: "auto",
+            padding: "20px",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "8px",
+          },
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          },
+        }}
       >
-        <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-          <div className="mt-3 text-center">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Document Preview: {selectedDoc?.name}
-            </h3>
-            <div className="mt-2 px-7 py-3">
-              {/* Add actual preview logic here based on file type */}
-              <p className="text-gray-500 italic">
-                (Preview functionality would be implemented here based on file
-                type)
-              </p>
-            </div>
-            <div className="items-center px-4 py-3">
-              <button
-                className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                onClick={closeModal}
-              >
-                Close
-              </button>
-            </div>
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold">Logs for {selectedDoc?.name}</h2>
+            <button
+              onClick={closeLogsModal}
+              className="text-gray-500 hover:text-red-600"
+            >
+              <XIcon size={20} />
+            </button>
+          </div>
+          <p className="text-xl font-semibold text-gray-500">
+            Hash: {selectedDoc?.hash}
+          </p>
+          <div className="mt-4 bg-gray-100 p-2 rounded">
+            <h3 className="font-semibold mb-2">Action Logs:</h3>
+            <ul className="list-disc list-inside text-sm">
+              {selectedDoc?.logs.map((log) => (
+                <li key={log.id} className="mb-1">
+                  <span className="font-semibold">{log.action}</span> -{" "}
+                  {log.time}: {log.description}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Document Preview Modal */}
+      <Modal
+        isOpen={isPreviewModalOpen}
+        onRequestClose={closePreviewModal}
+        ariaHideApp={false}
+        style={{
+          content: {
+            width: "700px",
+            height: "50vh",
+            margin: "auto",
+            padding: "20px",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "8px",
+          },
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          },
+        }}
+      >
+        <div className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold">Preview: {selectedDoc?.name}</h2>
+            <button
+              onClick={closePreviewModal}
+              className="text-gray-500 hover:text-red-600"
+            >
+              <XIcon size={20} />
+            </button>
+          </div>
+          <p className="text-sm text-gray-500">
+            Description: {selectedDoc?.description}
+          </p>
+          <div className="mt-4 bg-gray-100 p-2 rounded">
+            <p className="text-sm">
+              This is where the document preview would be displayed.
+            </p>
           </div>
         </div>
       </Modal>
     </div>
   );
-};
-
-export default CaseDocuments;
+}

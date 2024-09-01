@@ -29,21 +29,15 @@ const SarvaSurakshaLandingPage = () => {
               </p>
             </div>
           </div>
-          <nav className="hidden md:flex space-x-4">
+          <nav className="hidden md:flex space-x-4 items-center">
             <Link to="/" className="hover:underline">
               Home
             </Link>
-            <Link to="/about" className="hover:underline">
-              About Us
-            </Link>
-            <Link to="/services" className="hover:underline">
-              Services
-            </Link>
-            <Link to="/contact" className="hover:underline">
-              Contact
-            </Link>
-            <Link to="/faq" className="hover:underline">
-              FAQ
+            <Link
+              to="/pricing"
+              className="bg-white text-green-700 p-2 rounded-md"
+            >
+              Pricing
             </Link>
           </nav>
         </div>
