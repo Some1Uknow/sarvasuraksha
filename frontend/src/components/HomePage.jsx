@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaShieldAlt,
@@ -8,9 +8,17 @@ import {
   FaApple,
   FaSignInAlt,
   FaUserPlus,
+  FaRobot,
+  FaTimes,
 } from "react-icons/fa";
 
 const SarvaSurakshaLandingPage = () => {
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+
+  const toggleChatbot = () => {
+    setChatbotOpen(!chatbotOpen);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Header */}
@@ -138,6 +146,40 @@ const SarvaSurakshaLandingPage = () => {
       <footer className="bg-gray-200 text-center py-2 text-sm">
         <p>© 2024 SarvaSuraksha. All rights reserved.</p>
       </footer>
+
+      {/* Chatbot Icon */}
+      <div className="fixed bottom-4 right-4">
+        <button
+          onClick={toggleChatbot}
+          className="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none"
+        >
+          {chatbotOpen ? <FaTimes size={50} /> : <FaRobot size={50} />}
+        </button>
+
+        {/* Chatbot Window */}
+        {chatbotOpen && (
+          <div className="fixed bottom-16 right-4 bg-white w-80 h-96 shadow-lg rounded-lg p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold">Chat with us!</h3>
+              <button
+                onClick={toggleChatbot}
+                className="text-red-500 hover:text-red-700 focus:outline-none"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="flex-grow overflow-y-auto">
+              <p className="text-gray-600">Hello! How can I assist you today?</p>
+              {/* Add more mock chat messages here */}
+            </div>
+            <input
+              type="text"
+              className="w-full border rounded p-2 mt-2"
+              placeholder="Type a message..."
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
